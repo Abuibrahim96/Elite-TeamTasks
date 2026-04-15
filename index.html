@@ -2,184 +2,242 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Team Tasks</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#0A0A0A"/>
+<title>Elite TeamTasks</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --bg: #F5F3EE;
-    --card: #FFFFFF;
-    --text: #1A1A1A;
-    --muted: #888;
-    --border: #E5E2DA;
-    --accent: #1A1A1A;
-    --done-bg: #F0F0F0;
-    --hassan: #E8F5E9; --hassan-t: #1B5E20;
-    --naol: #E3F2FD; --naol-t: #0D47A1;
-    --maslah: #FFF3E0; --maslah-t: #E65100;
-    --ollie: #FCE4EC; --ollie-t: #880E4F;
-    --yussuf: #EDE7F6; --yussuf-t: #4527A0;
-    --radius: 16px;
+    --bg: #0A0A0A;
+    --panel: #141414;
+    --panel-2: #1C1C1C;
+    --line: #262626;
+    --line-2: #333;
+    --text: #F5F5F5;
+    --text-dim: #9A9A9A;
+    --muted: #6B6B6B;
+
+    --amber: #FFB020;
+    --amber-2: #FFC84D;
+    --orange: #FF6A1A;
+    --orange-dk: #E8550A;
+    --danger: #FF4D4D;
+    --ok: #22C55E;
+
+    --hassan: #1F3A1F;   --hassan-t: #7EE787;
+    --naol: #102A44;     --naol-t: #64B5F6;
+    --maslah: #3A2410;   --maslah-t: #FFB366;
+    --ollie: #3A1028;    --ollie-t: #F48FB1;
+    --yussuf: #24163F;   --yussuf-t: #B39DDB;
+
+    --radius: 10px;
+    --radius-lg: 14px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --nav-h: calc(64px + var(--safe-bottom));
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  html, body { overflow-x: hidden; width: 100%; }
+  body {
+    font-family: 'Archivo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input { font-family: inherit; color: inherit; }
 
+  /* ===== HEADER ===== */
   .topbar {
-    background: var(--text);
-    color: #fff;
-    padding: 18px 20px 14px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: calc(16px + var(--safe-top)) 18px 14px;
     position: sticky;
     top: 0;
     z-index: 100;
   }
-  .topbar h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
-  .topbar p { font-size: 12px; opacity: 0.5; margin-top: 2px; font-family: 'DM Mono', monospace; }
+  .topbar-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .brand-mark {
+    width: 34px; height: 34px; flex-shrink: 0;
+    background: var(--amber);
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px; color: #000;
+    letter-spacing: -1px;
+    box-shadow: 0 0 0 1px #000 inset, 0 0 0 2px var(--amber) inset;
+  }
+  .brand-text { min-width: 0; }
+  .brand-text h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 19px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .brand-text h1 .accent { color: var(--amber); }
+  .sync-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sync-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 6px var(--ok);
+    animation: pulse 2s infinite;
+  }
+  .sync-dot.err { background: var(--danger); box-shadow: 0 0 6px var(--danger); animation: none; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
+  /* ===== STATS (tasks) ===== */
   .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 14px 14px 8px;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 12px 6px 10px;
+    text-align: center;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--line-2);
+  }
+  .stat.accent::before { background: var(--amber); }
+  .stat.danger::before { background: var(--danger); }
+  .stat-num {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--text);
+  }
+  .stat-num.red { color: var(--danger); }
+  .stat-num.amber { color: var(--amber); }
+  .stat-lbl {
+    font-size: 9.5px; color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* ===== FILTERS ===== */
+  .filter-bar {
     display: flex;
-    gap: 8px;
-    padding: 14px 16px;
+    gap: 6px;
+    padding: 6px 14px 14px;
     overflow-x: auto;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
-  .stats-bar::-webkit-scrollbar { display: none; }
-  .stat {
-    background: var(--card);
-    border-radius: 12px;
-    padding: 10px 14px;
-    min-width: 80px;
-    text-align: center;
-    flex-shrink: 0;
-    border: 1px solid var(--border);
-  }
-  .stat-num { font-size: 22px; font-weight: 700; line-height: 1; }
-  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
-  .stat-num.red { color: #D32F2F; }
-
-  .add-section { padding: 0 16px 12px; }
-  .add-box {
-    background: var(--card);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    padding: 14px;
-  }
-  .add-box input[type=text] {
-    width: 100%;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: var(--text);
-    margin-bottom: 12px;
-  }
-  .add-box input[type=text]::placeholder { color: var(--muted); }
-  .member-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-  .chip {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 5px 12px;
-    border-radius: 99px;
-    border: 1.5px solid var(--border);
-    background: var(--bg);
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .chip.active-Hassan { background: var(--hassan); color: var(--hassan-t); border-color: var(--hassan-t); }
-  .chip.active-Naol { background: var(--naol); color: var(--naol-t); border-color: var(--naol-t); }
-  .chip.active-Maslah { background: var(--maslah); color: var(--maslah-t); border-color: var(--maslah-t); }
-  .chip.active-Ollie { background: var(--ollie); color: var(--ollie-t); border-color: var(--ollie-t); }
-  .chip.active-Yussuf { background: var(--yussuf); color: var(--yussuf-t); border-color: var(--yussuf-t); }
-
-  .due-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .due-row label { font-size: 12px; color: var(--muted); }
-  .due-row input[type=date] {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 4px 8px;
-    background: var(--bg);
-    color: var(--text);
-    outline: none;
-  }
-  .add-btn {
-    width: 100%;
-    background: var(--text);
-    color: #fff;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    border: none;
-    border-radius: 12px;
-    padding: 13px;
-    cursor: pointer;
-    letter-spacing: -0.3px;
-    transition: opacity 0.15s;
-  }
-  .add-btn:active { opacity: 0.8; }
-
-  .filter-bar { display: flex; gap: 6px; padding: 0 16px 14px; overflow-x: auto; scrollbar-width: none; }
   .filter-bar::-webkit-scrollbar { display: none; }
   .fbtn {
     font-size: 12px;
-    font-weight: 500;
-    padding: 6px 14px;
-    border-radius: 99px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--muted);
+    font-weight: 700;
+    padding: 9px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text-dim);
     cursor: pointer;
     white-space: nowrap;
-    font-family: 'DM Sans', sans-serif;
     flex-shrink: 0;
+    min-height: 36px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
     transition: all 0.15s;
   }
-  .fbtn.active { background: var(--text); color: #fff; border-color: var(--text); }
+  .fbtn.active {
+    background: var(--amber);
+    color: #000;
+    border-color: var(--amber);
+  }
 
-  .task-list { padding: 0 16px 100px; display: flex; flex-direction: column; gap: 8px; }
+  /* ===== LISTS / CONTENT AREA ===== */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .task-list, .notes-list {
+    padding: 0 14px;
+    padding-bottom: calc(var(--nav-h) + 180px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .notes-list { padding-bottom: calc(var(--nav-h) + 220px); }
+
+  /* ===== TASK CARD ===== */
   .task-card {
-    background: var(--card);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line-2);
     border-radius: var(--radius);
-    border: 1px solid var(--border);
-    padding: 14px;
+    padding: 13px;
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    transition: opacity 0.2s;
     animation: slideIn 0.2s ease;
   }
-  @keyframes slideIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-  .task-card.done { background: var(--done-bg); border-color: transparent; }
+  .task-card.overdue-card { border-left-color: var(--danger); }
+  .task-card.done { opacity: 0.55; border-left-color: var(--ok); }
+  @keyframes slideIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
 
   .check {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: 1.5px solid var(--line-2);
     background: transparent;
     cursor: pointer;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    transition: all 0.2s;
-    margin-top: 1px;
+    display: grid; place-items: center;
+    font-size: 15px;
+    font-weight: 900;
+    transition: all 0.15s;
   }
-  .check.done { background: #2E7D32; border-color: #2E7D32; color: #fff; }
+  .check.done { background: var(--ok); border-color: var(--ok); color: #000; }
 
   .task-body { flex: 1; min-width: 0; }
-  .task-text { font-size: 15px; line-height: 1.4; color: var(--text); }
+  .task-text {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--text);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
   .task-card.done .task-text { text-decoration: line-through; color: var(--muted); }
-  .task-meta { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .task-meta { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
   .name-tag {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 9px;
-    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 9px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid transparent;
   }
   .tag-Hassan { background: var(--hassan); color: var(--hassan-t); }
   .tag-Naol { background: var(--naol); color: var(--naol-t); }
@@ -187,98 +245,454 @@
   .tag-Ollie { background: var(--ollie); color: var(--ollie-t); }
   .tag-Yussuf { background: var(--yussuf); color: var(--yussuf-t); }
 
-  .due-tag { font-size: 11px; color: var(--muted); }
-  .overdue { font-size: 11px; background: #FFEBEE; color: #C62828; padding: 3px 8px; border-radius: 99px; font-weight: 700; }
+  .due-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 700;
+  }
+  .overdue {
+    font-size: 10px;
+    background: var(--danger);
+    color: #000;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
 
   .del {
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
     font-size: 20px;
     color: var(--muted);
     cursor: pointer;
-    line-height: 1;
     flex-shrink: 0;
-    padding: 0 2px;
     background: none;
     border: none;
-    font-family: inherit;
+    border-radius: 6px;
   }
-  .del:active { color: #C62828; }
+  .del:active { color: var(--danger); background: rgba(255,77,77,0.1); }
 
-  .empty { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 15px; }
-  .empty .emoji { font-size: 36px; margin-bottom: 8px; }
+  /* ===== NOTES ===== */
+  .notes-intro {
+    padding: 14px 16px 8px;
+  }
+  .notes-intro h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .notes-intro p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+  .note-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--amber);
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    animation: slideIn 0.2s ease;
+    position: relative;
+  }
+  .note-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; margin-bottom: 8px;
+  }
+  .note-head-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .note-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .note-text {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--text);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    font-weight: 400;
+  }
+  .note-del {
+    position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px;
+    display: grid; place-items: center;
+    font-size: 16px;
+    color: var(--muted);
+    background: none; border: none; border-radius: 6px;
+    cursor: pointer;
+  }
+  .note-del:active { color: var(--danger); background: rgba(255,77,77,0.1); }
 
-  .connecting { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty .emoji {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 42px;
+    color: var(--line-2);
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+  }
+  .empty .lbl {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+  }
+  .connecting {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+  }
 
-  /* firebase setup overlay */
+  /* ===== COMPOSER (sticky above bottom nav) ===== */
+  .dock {
+    position: fixed;
+    left: 0; right: 0;
+    bottom: var(--nav-h);
+    z-index: 90;
+    padding: 18px 10px 8px;
+    background: linear-gradient(to bottom, rgba(10,10,10,0) 0%, var(--bg) 40%);
+    pointer-events: none;
+  }
+  .compose-box {
+    pointer-events: auto;
+    background: var(--panel-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-lg);
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .compose-box.collapsed .expandable { display: none; }
+
+  .input-row { display: flex; gap: 8px; align-items: center; }
+  .compose-box input[type=text],
+  .compose-box textarea {
+    flex: 1;
+    width: 100%;
+    font-family: 'Archivo', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    padding: 10px 6px;
+    min-height: 42px;
+    resize: none;
+  }
+  .compose-box textarea { line-height: 1.4; min-height: 44px; max-height: 140px; }
+  .compose-box input[type=text]::placeholder,
+  .compose-box textarea::placeholder { color: var(--muted); }
+
+  .send-btn {
+    width: 44px; height: 44px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--amber);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 22px;
+    display: grid; place-items: center;
+    transition: transform 0.1s, background 0.15s;
+  }
+  .send-btn:active { transform: scale(0.93); background: var(--amber-2); }
+  .send-btn.orange { background: var(--orange); color: #fff; }
+  .send-btn.orange:active { background: var(--orange-dk); }
+
+  .expandable { padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--line); }
+  .member-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .chip {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--line-2);
+    background: var(--panel);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    min-height: 32px;
+  }
+  .chip.active-Hassan { background: var(--hassan); color: var(--hassan-t); border-color: var(--hassan-t); }
+  .chip.active-Naol { background: var(--naol); color: var(--naol-t); border-color: var(--naol-t); }
+  .chip.active-Maslah { background: var(--maslah); color: var(--maslah-t); border-color: var(--maslah-t); }
+  .chip.active-Ollie { background: var(--ollie); color: var(--ollie-t); border-color: var(--ollie-t); }
+  .chip.active-Yussuf { background: var(--yussuf); color: var(--yussuf-t); border-color: var(--yussuf-t); }
+
+  .due-row { display: flex; align-items: center; gap: 10px; }
+  .due-row label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .due-row input[type=date] {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: var(--panel);
+    color: var(--text);
+    outline: none;
+    min-height: 38px;
+    color-scheme: dark;
+  }
+  .compose-hint {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 0 4px;
+    margin-top: 2px;
+  }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: var(--nav-h);
+    padding-bottom: var(--safe-bottom);
+    background: #050505;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    z-index: 95;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    position: relative;
+    transition: color 0.15s;
+  }
+  .nav-btn .nav-ico {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .nav-btn.active { color: var(--amber); }
+  .nav-btn.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 30%; right: 30%;
+    height: 2px;
+    background: var(--amber);
+  }
+  .nav-badge {
+    position: absolute;
+    top: 8px;
+    right: calc(50% - 26px);
+    background: var(--orange);
+    color: #fff;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 9px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    display: grid; place-items: center;
+    letter-spacing: 0;
+  }
+
+  /* ===== SETUP OVERLAY ===== */
   .setup-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
     display: flex; align-items: center; justify-content: center;
     z-index: 200; padding: 20px;
+    backdrop-filter: blur(4px);
   }
   .setup-box {
-    background: #fff; border-radius: 20px; padding: 24px;
-    max-width: 400px; width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--line-2);
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 420px; width: 100%;
   }
-  .setup-box h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-  .setup-box p { font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; }
+  .setup-box .setup-brand {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .setup-box h2 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .setup-box p {
+    font-size: 13px; color: var(--text-dim);
+    margin-bottom: 16px; line-height: 1.5;
+  }
   .setup-box input {
-    width: 100%; font-size: 13px; font-family: 'DM Mono', monospace;
-    border: 1.5px solid #ddd; border-radius: 10px; padding: 10px 12px;
-    margin-bottom: 12px; outline: none; color: #1A1A1A;
+    width: 100%; font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    outline: none;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 44px;
   }
-  .setup-box input:focus { border-color: #1A1A1A; }
+  .setup-box input:focus { border-color: var(--amber); }
   .setup-box button {
-    width: 100%; background: #1A1A1A; color: #fff;
-    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700;
-    border: none; border-radius: 12px; padding: 13px; cursor: pointer;
+    width: 100%;
+    background: var(--amber);
+    color: #000;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    min-height: 48px;
   }
-  .setup-note { font-size: 11px; color: #999; margin-top: 10px; text-align: center; }
+  .setup-note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 12px;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
 </style>
 </head>
 <body>
 
-<!-- Firebase Setup Overlay -->
 <div class="setup-overlay" id="setup-overlay">
   <div class="setup-box">
-    <h2>Connect your database</h2>
-    <p>Paste your Firebase Realtime Database URL below. This is a one-time setup — your team's tasks will sync live across all phones.</p>
+    <div class="setup-brand">
+      <div class="brand-mark">E</div>
+      <h2>Elite TeamTasks</h2>
+    </div>
+    <p>Paste your Firebase Realtime Database URL below. This is a one-time setup — your team's tasks and notes will sync live across all phones.</p>
     <input type="text" id="fb-url-input" placeholder="https://your-app-default-rtdb.firebaseio.com" />
-    <button onclick="saveFirebaseURL()">Connect & Start</button>
-    <p class="setup-note">Don't have one? Follow the guide at firebase.google.com → Realtime Database → Create database (free)</p>
+    <button onclick="saveFirebaseURL()">Connect &amp; Start</button>
+    <p class="setup-note">Need one? firebase.google.com → Realtime Database → Create (free).</p>
   </div>
 </div>
 
 <div class="topbar">
-  <h1>Team Tasks</h1>
-  <p id="sync-status">connecting...</p>
-</div>
-
-<div class="stats-bar" id="stats-bar"></div>
-
-<div class="add-section">
-  <div class="add-box">
-    <input type="text" id="task-input" placeholder="What needs to get done?" />
-    <div class="member-chips" id="member-chips"></div>
-    <div class="due-row">
-      <label>Due date</label>
-      <input type="date" id="due-input" />
+  <div class="topbar-row">
+    <div class="brand">
+      <div class="brand-mark">E</div>
+      <div class="brand-text">
+        <h1>ELITE <span class="accent">TEAMTASKS</span></h1>
+        <div class="sync-pill">
+          <span class="sync-dot" id="sync-dot"></span>
+          <span id="sync-status">CONNECTING</span>
+        </div>
+      </div>
     </div>
-    <button class="add-btn" onclick="addTask()">Add Task</button>
   </div>
 </div>
 
-<div class="filter-bar" id="filter-bar"></div>
+<!-- TASKS VIEW -->
+<section class="view active" id="view-tasks">
+  <div class="stats-bar" id="stats-bar"></div>
+  <div class="filter-bar" id="filter-bar"></div>
+  <div class="task-list" id="task-list"><div class="connecting">Loading tasks...</div></div>
+</section>
 
-<div class="task-list" id="task-list"><div class="connecting">Loading tasks...</div></div>
+<!-- NOTES VIEW -->
+<section class="view" id="view-notes">
+  <div class="notes-intro">
+    <h2>TEAM NOTES</h2>
+    <p>Quick messages to the crew. Live across every phone.</p>
+  </div>
+  <div class="notes-list" id="notes-list"><div class="connecting">Loading notes...</div></div>
+</section>
+
+<!-- TASK COMPOSER -->
+<div class="dock" id="dock-tasks">
+  <div class="compose-box collapsed" id="task-compose">
+    <div class="input-row">
+      <input type="text" id="task-input" placeholder="What needs to get done?" />
+      <button class="send-btn" onclick="addTask()" aria-label="Add task">+</button>
+    </div>
+    <div class="expandable">
+      <div class="member-chips" id="member-chips"></div>
+      <div class="due-row">
+        <label>Due</label>
+        <input type="date" id="due-input" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE COMPOSER -->
+<div class="dock" id="dock-notes" style="display:none">
+  <div class="compose-box collapsed" id="note-compose">
+    <div class="input-row">
+      <textarea id="note-input" rows="1" placeholder="Post a note to the team..."></textarea>
+      <button class="send-btn orange" onclick="addNote()" aria-label="Post note">↑</button>
+    </div>
+    <div class="expandable">
+      <div class="member-chips" id="note-member-chips"></div>
+      <div class="compose-hint">Posting as selected name</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-tasks" onclick="switchTab('tasks')">
+    <span class="nav-ico">▣</span>
+    <span>Tasks</span>
+  </button>
+  <button class="nav-btn" id="nav-notes" onclick="switchTab('notes')">
+    <span class="nav-ico">✎</span>
+    <span>Notes</span>
+  </button>
+</nav>
 
 <script>
 const MEMBERS = ["Hassan","Naol","Maslah","Ollie","Yussuf"];
 let selectedMember = MEMBERS[0];
+let noteAuthor = MEMBERS[0];
 let filterBy = "all";
 let tasks = {};
+let notes = {};
+let currentTab = "tasks";
 let DB_URL = localStorage.getItem("fb_db_url") || "";
 let pollInterval = null;
 
-// Show setup if no DB URL
 function checkSetup() {
   if (DB_URL) {
     document.getElementById("setup-overlay").style.display = "none";
@@ -297,10 +711,15 @@ function saveFirebaseURL() {
 
 async function initDB() {
   renderChips();
+  renderNoteChips();
   renderFilters();
-  await fetchTasks();
-  // Poll every 5 seconds for live sync
-  pollInterval = setInterval(fetchTasks, 5000);
+  await Promise.all([fetchTasks(), fetchNotes()]);
+  pollInterval = setInterval(() => { fetchTasks(); fetchNotes(); }, 5000);
+}
+
+function setSyncStatus(ok, msg) {
+  document.getElementById("sync-status").textContent = msg;
+  document.getElementById("sync-dot").classList.toggle("err", !ok);
 }
 
 async function fetchTasks() {
@@ -309,11 +728,21 @@ async function fetchTasks() {
     if (!res.ok) throw new Error();
     const data = await res.json();
     tasks = data || {};
-    document.getElementById("sync-status").textContent = "live • syncing every 5s";
+    setSyncStatus(true, "LIVE • SYNC 5s");
     renderAll();
   } catch(e) {
-    document.getElementById("sync-status").textContent = "⚠ connection error";
+    setSyncStatus(false, "CONNECTION ERROR");
   }
+}
+
+async function fetchNotes() {
+  try {
+    const res = await fetch(`${DB_URL}/notes.json`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    notes = data || {};
+    renderNotes();
+  } catch(e) { /* status already set by tasks fetch */ }
 }
 
 async function pushTask(id, task) {
@@ -323,11 +752,23 @@ async function pushTask(id, task) {
     body: JSON.stringify(task)
   });
 }
+async function pushNote(id, note) {
+  await fetch(`${DB_URL}/notes/${id}.json`, {
+    method: "PUT",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(note)
+  });
+}
 
 async function removeTask(id) {
   await fetch(`${DB_URL}/tasks/${id}.json`, { method: "DELETE" });
   delete tasks[id];
   renderAll();
+}
+async function removeNote(id) {
+  await fetch(`${DB_URL}/notes/${id}.json`, { method: "DELETE" });
+  delete notes[id];
+  renderNotes();
 }
 
 async function addTask() {
@@ -339,8 +780,25 @@ async function addTask() {
   const task = { text, assignee: selectedMember, done: false, due: due.value, ts: Date.now() };
   tasks[id] = task;
   input.value = ""; due.value = "";
+  input.blur();
+  collapseBox("task-compose");
   renderAll();
   await pushTask(id, task);
+}
+
+async function addNote() {
+  const input = document.getElementById("note-input");
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  const id = "n" + Date.now();
+  const note = { text, author: noteAuthor, ts: Date.now() };
+  notes[id] = note;
+  input.value = "";
+  input.style.height = "auto";
+  input.blur();
+  collapseBox("note-compose");
+  renderNotes();
+  await pushNote(id, note);
 }
 
 async function toggleDone(id) {
@@ -350,7 +808,31 @@ async function toggleDone(id) {
   await pushTask(id, tasks[id]);
 }
 
-document.addEventListener("keydown", e => { if (e.key === "Enter" && document.activeElement.id === "task-input") addTask(); });
+function collapseBox(id) { document.getElementById(id).classList.add("collapsed"); }
+function expandBox(id)   { document.getElementById(id).classList.remove("collapsed"); }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const tInput = document.getElementById("task-input");
+  tInput.addEventListener("focus", () => expandBox("task-compose"));
+  tInput.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addTask(); } });
+
+  const nInput = document.getElementById("note-input");
+  nInput.addEventListener("focus", () => expandBox("note-compose"));
+  nInput.addEventListener("input", () => {
+    nInput.style.height = "auto";
+    nInput.style.height = Math.min(nInput.scrollHeight, 140) + "px";
+  });
+  nInput.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addNote(); }
+  });
+
+  document.addEventListener("click", (e) => {
+    const tBox = document.getElementById("task-compose");
+    const nBox = document.getElementById("note-compose");
+    if (!tBox.contains(e.target) && !tInput.value.trim()) collapseBox("task-compose");
+    if (!nBox.contains(e.target) && !nInput.value.trim()) collapseBox("note-compose");
+  });
+});
 
 function isOverdue(t) {
   if (!t.due || t.done) return false;
@@ -360,6 +842,11 @@ function isOverdue(t) {
 function renderChips() {
   document.getElementById("member-chips").innerHTML = MEMBERS.map(m =>
     `<button class="chip${selectedMember===m?" active-"+m:""}" onclick="selectMember('${m}')">${m}</button>`
+  ).join("");
+}
+function renderNoteChips() {
+  document.getElementById("note-member-chips").innerHTML = MEMBERS.map(m =>
+    `<button class="chip${noteAuthor===m?" active-"+m:""}" onclick="selectNoteAuthor('${m}')">${m}</button>`
   ).join("");
 }
 
@@ -378,11 +865,13 @@ function renderStats() {
   const overdue = arr.filter(t=>isOverdue(t)).length;
   document.getElementById("stats-bar").innerHTML = `
     <div class="stat"><div class="stat-num">${total}</div><div class="stat-lbl">Total</div></div>
-    <div class="stat"><div class="stat-num">${pending}</div><div class="stat-lbl">Pending</div></div>
+    <div class="stat accent"><div class="stat-num amber">${pending}</div><div class="stat-lbl">Active</div></div>
     <div class="stat"><div class="stat-num">${done}</div><div class="stat-lbl">Done</div></div>
-    <div class="stat"><div class="stat-num${overdue?" red":""}">${overdue}</div><div class="stat-lbl">Overdue</div></div>
+    <div class="stat${overdue?" danger":""}"><div class="stat-num${overdue?" red":""}">${overdue}</div><div class="stat-lbl">Overdue</div></div>
   `;
 }
+
+function escapeHTML(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function renderTasks() {
   let arr = Object.entries(tasks).map(([id,t])=>({id,...t}));
@@ -393,28 +882,76 @@ function renderTasks() {
 
   const list = document.getElementById("task-list");
   if (!arr.length) {
-    list.innerHTML = `<div class="empty"><div class="emoji">✓</div>No tasks here</div>`;
+    list.innerHTML = `<div class="empty"><div class="emoji">—</div><div class="lbl">No tasks</div></div>`;
     return;
   }
-  list.innerHTML = arr.map(t => `
-    <div class="task-card${t.done?" done":""}">
-      <button class="check${t.done?" done":""}" onclick="toggleDone('${t.id}')">${t.done?"✓":""}</button>
+  list.innerHTML = arr.map(t => {
+    const over = isOverdue(t);
+    return `
+    <div class="task-card${t.done?" done":""}${over?" overdue-card":""}">
+      <button class="check${t.done?" done":""}" onclick="toggleDone('${t.id}')" aria-label="Toggle done">${t.done?"✓":""}</button>
       <div class="task-body">
-        <div class="task-text">${t.text}</div>
+        <div class="task-text">${escapeHTML(t.text)}</div>
         <div class="task-meta">
           <span class="name-tag tag-${t.assignee}">${t.assignee}</span>
           ${t.due?`<span class="due-tag">${t.due}</span>`:""}
-          ${isOverdue(t)?`<span class="overdue">Overdue</span>`:""}
+          ${over?`<span class="overdue">Overdue</span>`:""}
         </div>
       </div>
-      <button class="del" onclick="removeTask('${t.id}')">×</button>
+      <button class="del" onclick="removeTask('${t.id}')" aria-label="Delete">×</button>
+    </div>`;
+  }).join("");
+}
+
+function timeAgo(ts) {
+  const sec = Math.floor((Date.now() - ts) / 1000);
+  if (sec < 60) return "just now";
+  const min = Math.floor(sec / 60);
+  if (min < 60) return min + "m ago";
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return hr + "h ago";
+  const d = Math.floor(hr / 24);
+  if (d < 7) return d + "d ago";
+  const date = new Date(ts);
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function renderNotes() {
+  const arr = Object.entries(notes).map(([id,n])=>({id,...n})).sort((a,b) => b.ts - a.ts);
+  const list = document.getElementById("notes-list");
+  if (!arr.length) {
+    list.innerHTML = `<div class="empty"><div class="emoji">—</div><div class="lbl">No notes yet</div></div>`;
+    return;
+  }
+  list.innerHTML = arr.map(n => `
+    <div class="note-card">
+      <button class="note-del" onclick="removeNote('${n.id}')" aria-label="Delete">×</button>
+      <div class="note-head">
+        <div class="note-head-left">
+          <span class="name-tag tag-${n.author||'Hassan'}">${n.author||'—'}</span>
+        </div>
+        <span class="note-time">${timeAgo(n.ts)}</span>
+      </div>
+      <div class="note-text">${escapeHTML(n.text)}</div>
     </div>
   `).join("");
 }
 
 function renderAll() { renderChips(); renderFilters(); renderStats(); renderTasks(); }
 function selectMember(m) { selectedMember = m; renderChips(); }
+function selectNoteAuthor(m) { noteAuthor = m; renderNoteChips(); }
 function setFilter(f) { filterBy = f; renderAll(); }
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById("view-tasks").classList.toggle("active", tab === "tasks");
+  document.getElementById("view-notes").classList.toggle("active", tab === "notes");
+  document.getElementById("nav-tasks").classList.toggle("active", tab === "tasks");
+  document.getElementById("nav-notes").classList.toggle("active", tab === "notes");
+  document.getElementById("dock-tasks").style.display = tab === "tasks" ? "" : "none";
+  document.getElementById("dock-notes").style.display = tab === "notes" ? "" : "none";
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
 
 checkSetup();
 </script>
