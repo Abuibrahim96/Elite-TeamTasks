@@ -38,8 +38,19 @@
     --safe-top: env(safe-area-inset-top, 0px);
     --nav-h: calc(64px + var(--safe-bottom));
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { overflow-x: hidden; width: 100%; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    width: 100%;
+    max-width: 100vw;
+  }
+  .topbar, .stats-bar, .filter-section, .filter-row, .task-list, .notes-list,
+  .notes-intro, .dock, .compose-box, .bottom-nav, .view {
+    max-width: 100vw;
+    width: 100%;
+  }
+  img, video, iframe { max-width: 100%; height: auto; }
   body {
     font-family: 'Archivo', sans-serif;
     background: var(--bg);
@@ -485,6 +496,14 @@
     color: #000;
     font-weight: 900;
   }
+  .chip.chip-all { color: var(--amber); border-color: var(--line-2); }
+  .chip.chip-all.active-all {
+    background: var(--amber);
+    color: #000;
+    border-color: var(--amber);
+  }
+  .chip.chip-all.active-all .chk { opacity: 1; background: #000; }
+  .chip.chip-all.active-all .chk::after { content: '✓'; color: var(--amber); font-weight: 900; }
   .chip.active-Hassan { background: var(--hassan); color: var(--hassan-t); border-color: var(--hassan-t); }
   .chip.active-Naol { background: var(--naol); color: var(--naol-t); border-color: var(--naol-t); }
   .chip.active-Maslah { background: var(--maslah); color: var(--maslah-t); border-color: var(--maslah-t); }
@@ -903,10 +922,13 @@ function isOverdue(t) {
 }
 
 function renderChips() {
-  document.getElementById("member-chips").innerHTML = MEMBERS.map(m => {
+  const allOn = MEMBERS.every(m => selectedMembers.includes(m));
+  const everyoneChip = `<button class="chip chip-all${allOn?" active-all":""}" onclick="toggleAllMembers()"><span class="chk"></span>Everyone</button>`;
+  const memberChips = MEMBERS.map(m => {
     const active = selectedMembers.includes(m);
     return `<button class="chip${active?" active-"+m:""}" onclick="selectMember('${m}')"><span class="chk"></span>${m}</button>`;
   }).join("");
+  document.getElementById("member-chips").innerHTML = everyoneChip + memberChips;
 }
 function renderNoteChips() {
   document.getElementById("note-member-chips").innerHTML = MEMBERS.map(m =>
@@ -1010,6 +1032,11 @@ function selectMember(m) {
   const i = selectedMembers.indexOf(m);
   if (i >= 0) { if (selectedMembers.length > 1) selectedMembers.splice(i, 1); }
   else selectedMembers.push(m);
+  renderChips();
+}
+function toggleAllMembers() {
+  const allOn = MEMBERS.every(m => selectedMembers.includes(m));
+  selectedMembers = allOn ? [MEMBERS[0]] : [...MEMBERS];
   renderChips();
 }
 function taskAssignees(t) {
