@@ -866,9 +866,9 @@ async function addTask() {
     input.value = "";
     due.value = "";
     selectedMembers = [MEMBERS[0]];
+    updateChipStates();
     input.blur();
     collapseBox("task-compose");
-    renderChips();
   } finally {
     submittingTask = false;
   }
@@ -934,15 +934,43 @@ function isOverdue(t) {
   return new Date(t.due) < new Date(new Date().toDateString());
 }
 
-function renderChips() {
-  const allOn = MEMBERS.every(m => selectedMembers.includes(m));
-  const everyoneChip = `<button class="chip chip-all${allOn?" active-all":""}" onclick="toggleAllMembers()"><span class="chk"></span>Everyone</button>`;
-  const memberChips = MEMBERS.map(m => {
-    const active = selectedMembers.includes(m);
-    return `<button class="chip${active?" active-"+m:""}" onclick="selectMember('${m}')"><span class="chk"></span>${m}</button>`;
-  }).join("");
-  document.getElementById("member-chips").innerHTML = everyoneChip + memberChips;
+let chipsBuilt = false;
+function buildChips() {
+  const container = document.getElementById("member-chips");
+  container.innerHTML = "";
+  const allBtn = document.createElement("button");
+  allBtn.type = "button";
+  allBtn.className = "chip chip-all";
+  allBtn.dataset.role = "all";
+  allBtn.innerHTML = '<span class="chk"></span>Everyone';
+  allBtn.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); toggleAllMembers(); });
+  container.appendChild(allBtn);
+  MEMBERS.forEach(m => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip";
+    btn.dataset.member = m;
+    btn.innerHTML = `<span class="chk"></span>${m}`;
+    btn.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); selectMember(m); });
+    container.appendChild(btn);
+  });
+  chipsBuilt = true;
+  updateChipStates();
 }
+function updateChipStates() {
+  const container = document.getElementById("member-chips");
+  if (!container || !chipsBuilt) return;
+  const allOn = MEMBERS.every(m => selectedMembers.includes(m));
+  const allBtn = container.querySelector('[data-role="all"]');
+  if (allBtn) allBtn.classList.toggle("active-all", allOn);
+  MEMBERS.forEach(m => {
+    const btn = container.querySelector(`[data-member="${m}"]`);
+    if (!btn) return;
+    MEMBERS.forEach(x => btn.classList.remove("active-" + x));
+    if (selectedMembers.includes(m)) btn.classList.add("active-" + m);
+  });
+}
+function renderChips() { if (!chipsBuilt) buildChips(); else updateChipStates(); }
 function renderNoteChips() {
   document.getElementById("note-member-chips").innerHTML = MEMBERS.map(m =>
     `<button class="chip${noteAuthor===m?" active-"+m:""}" onclick="selectNoteAuthor('${m}')">${m}</button>`
@@ -1036,17 +1064,17 @@ function renderNotes() {
   `).join("");
 }
 
-function renderAll() { renderChips(); renderFilters(); renderStats(); renderTasks(); }
+function renderAll() { renderFilters(); renderStats(); renderTasks(); }
 function selectMember(m) {
   const i = selectedMembers.indexOf(m);
-  if (i >= 0) { if (selectedMembers.length > 1) selectedMembers.splice(i, 1); }
+  if (i >= 0) selectedMembers.splice(i, 1);
   else selectedMembers.push(m);
-  renderChips();
+  updateChipStates();
 }
 function toggleAllMembers() {
   const allOn = MEMBERS.every(m => selectedMembers.includes(m));
-  selectedMembers = allOn ? [MEMBERS[0]] : [...MEMBERS];
-  renderChips();
+  selectedMembers = allOn ? [] : [...MEMBERS];
+  updateChipStates();
 }
 function taskAssignees(t) {
   if (Array.isArray(t.assignees) && t.assignees.length) return t.assignees;
