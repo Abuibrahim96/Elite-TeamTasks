@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Team Tasks</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --card: #FFFFFF;
+    --text: #1A1A1A;
+    --muted: #888;
+    --border: #E5E2DA;
+    --accent: #1A1A1A;
+    --done-bg: #F0F0F0;
+    --hassan: #E8F5E9; --hassan-t: #1B5E20;
+    --naol: #E3F2FD; --naol-t: #0D47A1;
+    --maslah: #FFF3E0; --maslah-t: #E65100;
+    --ollie: #FCE4EC; --ollie-t: #880E4F;
+    --yussuf: #EDE7F6; --yussuf-t: #4527A0;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .topbar {
+    background: var(--text);
+    color: #fff;
+    padding: 18px 20px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .topbar p { font-size: 12px; opacity: 0.5; margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+  .stats-bar {
+    display: flex;
+    gap: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .stats-bar::-webkit-scrollbar { display: none; }
+  .stat {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 10px 14px;
+    min-width: 80px;
+    text-align: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .stat-num { font-size: 22px; font-weight: 700; line-height: 1; }
+  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .stat-num.red { color: #D32F2F; }
+
+  .add-section { padding: 0 16px 12px; }
+  .add-box {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 14px;
+  }
+  .add-box input[type=text] {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .add-box input[type=text]::placeholder { color: var(--muted); }
+  .member-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .chip {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 99px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .chip.active-Hassan { background: var(--hassan); color: var(--hassan-t); border-color: var(--hassan-t); }
+  .chip.active-Naol { background: var(--naol); color: var(--naol-t); border-color: var(--naol-t); }
+  .chip.active-Maslah { background: var(--maslah); color: var(--maslah-t); border-color: var(--maslah-t); }
+  .chip.active-Ollie { background: var(--ollie); color: var(--ollie-t); border-color: var(--ollie-t); }
+  .chip.active-Yussuf { background: var(--yussuf); color: var(--yussuf-t); border-color: var(--yussuf-t); }
+
+  .due-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .due-row label { font-size: 12px; color: var(--muted); }
+  .due-row input[type=date] {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 8px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+  }
+  .add-btn {
+    width: 100%;
+    background: var(--text);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    cursor: pointer;
+    letter-spacing: -0.3px;
+    transition: opacity 0.15s;
+  }
+  .add-btn:active { opacity: 0.8; }
+
+  .filter-bar { display: flex; gap: 6px; padding: 0 16px 14px; overflow-x: auto; scrollbar-width: none; }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .fbtn {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .fbtn.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  .task-list { padding: 0 16px 100px; display: flex; flex-direction: column; gap: 8px; }
+  .task-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: opacity 0.2s;
+    animation: slideIn 0.2s ease;
+  }
+  @keyframes slideIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  .task-card.done { background: var(--done-bg); border-color: transparent; }
+
+  .check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+  .check.done { background: #2E7D32; border-color: #2E7D32; color: #fff; }
+
+  .task-body { flex: 1; min-width: 0; }
+  .task-text { font-size: 15px; line-height: 1.4; color: var(--text); }
+  .task-card.done .task-text { text-decoration: line-through; color: var(--muted); }
+  .task-meta { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .name-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 99px;
+  }
+  .tag-Hassan { background: var(--hassan); color: var(--hassan-t); }
+  .tag-Naol { background: var(--naol); color: var(--naol-t); }
+  .tag-Maslah { background: var(--maslah); color: var(--maslah-t); }
+  .tag-Ollie { background: var(--ollie); color: var(--ollie-t); }
+  .tag-Yussuf { background: var(--yussuf); color: var(--yussuf-t); }
+
+  .due-tag { font-size: 11px; color: var(--muted); }
+  .overdue { font-size: 11px; background: #FFEBEE; color: #C62828; padding: 3px 8px; border-radius: 99px; font-weight: 700; }
+
+  .del {
+    font-size: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1;
+    flex-shrink: 0;
+    padding: 0 2px;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  .del:active { color: #C62828; }
+
+  .empty { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 15px; }
+  .empty .emoji { font-size: 36px; margin-bottom: 8px; }
+
+  .connecting { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+
+  /* firebase setup overlay */
+  .setup-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200; padding: 20px;
+  }
+  .setup-box {
+    background: #fff; border-radius: 20px; padding: 24px;
+    max-width: 400px; width: 100%;
+  }
+  .setup-box h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .setup-box p { font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; }
+  .setup-box input {
+    width: 100%; font-size: 13px; font-family: 'DM Mono', monospace;
+    border: 1.5px solid #ddd; border-radius: 10px; padding: 10px 12px;
+    margin-bottom: 12px; outline: none; color: #1A1A1A;
+  }
+  .setup-box input:focus { border-color: #1A1A1A; }
+  .setup-box button {
+    width: 100%; background: #1A1A1A; color: #fff;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700;
+    border: none; border-radius: 12px; padding: 13px; cursor: pointer;
+  }
+  .setup-note { font-size: 11px; color: #999; margin-top: 10px; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- Firebase Setup Overlay -->
+<div class="setup-overlay" id="setup-overlay">
+  <div class="setup-box">
+    <h2>Connect your database</h2>
+    <p>Paste your Firebase Realtime Database URL below. This is a one-time setup — your team's tasks will sync live across all phones.</p>
+    <input type="text" id="fb-url-input" placeholder="https://your-app-default-rtdb.firebaseio.com" />
+    <button onclick="saveFirebaseURL()">Connect & Start</button>
+    <p class="setup-note">Don't have one? Follow the guide at firebase.google.com → Realtime Database → Create database (free)</p>
+  </div>
+</div>
+
+<div class="topbar">
+  <h1>Team Tasks</h1>
+  <p id="sync-status">connecting...</p>
+</div>
+
+<div class="stats-bar" id="stats-bar"></div>
+
+<div class="add-section">
+  <div class="add-box">
+    <input type="text" id="task-input" placeholder="What needs to get done?" />
+    <div class="member-chips" id="member-chips"></div>
+    <div class="due-row">
+      <label>Due date</label>
+      <input type="date" id="due-input" />
+    </div>
+    <button class="add-btn" onclick="addTask()">Add Task</button>
+  </div>
+</div>
+
+<div class="filter-bar" id="filter-bar"></div>
+
+<div class="task-list" id="task-list"><div class="connecting">Loading tasks...</div></div>
+
+<script>
+const MEMBERS = ["Hassan","Naol","Maslah","Ollie","Yussuf"];
+let selectedMember = MEMBERS[0];
+let filterBy = "all";
+let tasks = {};
+let DB_URL = localStorage.getItem("fb_db_url") || "";
+let pollInterval = null;
+
+// Show setup if no DB URL
+function checkSetup() {
+  if (DB_URL) {
+    document.getElementById("setup-overlay").style.display = "none";
+    initDB();
+  }
+}
+
+function saveFirebaseURL() {
+  const val = document.getElementById("fb-url-input").value.trim().replace(/\/$/, "");
+  if (!val.startsWith("https://")) { alert("Please enter a valid Firebase URL"); return; }
+  DB_URL = val;
+  localStorage.setItem("fb_db_url", DB_URL);
+  document.getElementById("setup-overlay").style.display = "none";
+  initDB();
+}
+
+async function initDB() {
+  renderChips();
+  renderFilters();
+  await fetchTasks();
+  // Poll every 5 seconds for live sync
+  pollInterval = setInterval(fetchTasks, 5000);
+}
+
+async function fetchTasks() {
+  try {
+    const res = await fetch(`${DB_URL}/tasks.json`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    tasks = data || {};
+    document.getElementById("sync-status").textContent = "live • syncing every 5s";
+    renderAll();
+  } catch(e) {
+    document.getElementById("sync-status").textContent = "⚠ connection error";
+  }
+}
+
+async function pushTask(id, task) {
+  await fetch(`${DB_URL}/tasks/${id}.json`, {
+    method: "PUT",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(task)
+  });
+}
+
+async function removeTask(id) {
+  await fetch(`${DB_URL}/tasks/${id}.json`, { method: "DELETE" });
+  delete tasks[id];
+  renderAll();
+}
+
+async function addTask() {
+  const input = document.getElementById("task-input");
+  const due = document.getElementById("due-input");
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  const id = "t" + Date.now();
+  const task = { text, assignee: selectedMember, done: false, due: due.value, ts: Date.now() };
+  tasks[id] = task;
+  input.value = ""; due.value = "";
+  renderAll();
+  await pushTask(id, task);
+}
+
+async function toggleDone(id) {
+  if (!tasks[id]) return;
+  tasks[id].done = !tasks[id].done;
+  renderAll();
+  await pushTask(id, tasks[id]);
+}
+
+document.addEventListener("keydown", e => { if (e.key === "Enter" && document.activeElement.id === "task-input") addTask(); });
+
+function isOverdue(t) {
+  if (!t.due || t.done) return false;
+  return new Date(t.due) < new Date(new Date().toDateString());
+}
+
+function renderChips() {
+  document.getElementById("member-chips").innerHTML = MEMBERS.map(m =>
+    `<button class="chip${selectedMember===m?" active-"+m:""}" onclick="selectMember('${m}')">${m}</button>`
+  ).join("");
+}
+
+function renderFilters() {
+  const filters = [["all","Everyone"],["pending","Pending"],["done","Done"],...MEMBERS.map(m=>[m,m])];
+  document.getElementById("filter-bar").innerHTML = filters.map(([val,lbl]) =>
+    `<button class="fbtn${filterBy===val?" active":""}" onclick="setFilter('${val}')">${lbl}</button>`
+  ).join("");
+}
+
+function renderStats() {
+  const arr = Object.values(tasks);
+  const total = arr.length;
+  const done = arr.filter(t=>t.done).length;
+  const pending = total - done;
+  const overdue = arr.filter(t=>isOverdue(t)).length;
+  document.getElementById("stats-bar").innerHTML = `
+    <div class="stat"><div class="stat-num">${total}</div><div class="stat-lbl">Total</div></div>
+    <div class="stat"><div class="stat-num">${pending}</div><div class="stat-lbl">Pending</div></div>
+    <div class="stat"><div class="stat-num">${done}</div><div class="stat-lbl">Done</div></div>
+    <div class="stat"><div class="stat-num${overdue?" red":""}">${overdue}</div><div class="stat-lbl">Overdue</div></div>
+  `;
+}
+
+function renderTasks() {
+  let arr = Object.entries(tasks).map(([id,t])=>({id,...t}));
+  arr.sort((a,b) => b.ts - a.ts);
+  if (filterBy === "pending") arr = arr.filter(t=>!t.done);
+  else if (filterBy === "done") arr = arr.filter(t=>t.done);
+  else if (MEMBERS.includes(filterBy)) arr = arr.filter(t=>t.assignee===filterBy);
+
+  const list = document.getElementById("task-list");
+  if (!arr.length) {
+    list.innerHTML = `<div class="empty"><div class="emoji">✓</div>No tasks here</div>`;
+    return;
+  }
+  list.innerHTML = arr.map(t => `
+    <div class="task-card${t.done?" done":""}">
+      <button class="check${t.done?" done":""}" onclick="toggleDone('${t.id}')">${t.done?"✓":""}</button>
+      <div class="task-body">
+        <div class="task-text">${t.text}</div>
+        <div class="task-meta">
+          <span class="name-tag tag-${t.assignee}">${t.assignee}</span>
+          ${t.due?`<span class="due-tag">${t.due}</span>`:""}
+          ${isOverdue(t)?`<span class="overdue">Overdue</span>`:""}
+        </div>
+      </div>
+      <button class="del" onclick="removeTask('${t.id}')">×</button>
+    </div>
+  `).join("");
+}
+
+function renderAll() { renderChips(); renderFilters(); renderStats(); renderTasks(); }
+function selectMember(m) { selectedMember = m; renderChips(); }
+function setFilter(f) { filterBy = f; renderAll(); }
+
+checkSetup();
+</script>
+</body>
+</html>
