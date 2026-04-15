@@ -700,11 +700,7 @@
 <section class="view active" id="view-tasks">
   <div class="stats-bar" id="stats-bar"></div>
   <div class="filter-section">
-    <div class="section-label">Status</div>
-    <div class="filter-row" id="filter-status"></div>
-  </div>
-  <div class="filter-section">
-    <div class="section-label">Person</div>
+    <div class="section-label">Filter by Person</div>
     <div class="filter-row" id="filter-person"></div>
   </div>
   <div class="task-list" id="task-list"><div class="connecting">Loading tasks...</div></div>
@@ -937,10 +933,6 @@ function renderNoteChips() {
 }
 
 function renderFilters() {
-  const status = [["all","Everyone"],["pending","Pending"],["done","Done"]];
-  document.getElementById("filter-status").innerHTML = status.map(([val,lbl]) =>
-    `<button class="fbtn${filterBy===val?" active":""}" onclick="setFilter('${val}')">${lbl}</button>`
-  ).join("");
   document.getElementById("filter-person").innerHTML = MEMBERS.map(m => {
     const active = filterBy === m;
     return `<button class="fbtn${active?" active active-"+m:""}" onclick="setPersonFilter('${m}')">${m}</button>`;
