@@ -154,17 +154,17 @@
   }
   .filter-bar::-webkit-scrollbar { display: none; }
   .fbtn {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
-    padding: 9px 14px;
-    border-radius: 8px;
+    padding: 12px 18px;
+    border-radius: 10px;
     border: 1px solid var(--line);
     background: var(--panel);
     color: var(--text-dim);
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    min-height: 36px;
+    min-height: 44px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     transition: all 0.15s;
@@ -205,14 +205,14 @@
   @keyframes slideIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
 
   .check {
-    width: 28px; height: 28px;
-    border-radius: 6px;
+    width: 44px; height: 44px;
+    border-radius: 8px;
     border: 1.5px solid var(--line-2);
     background: transparent;
     cursor: pointer;
     flex-shrink: 0;
     display: grid; place-items: center;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 900;
     transition: all 0.15s;
   }
@@ -228,16 +228,17 @@
     overflow-wrap: break-word;
   }
   .task-card.done .task-text { text-decoration: line-through; color: var(--muted); }
-  .task-meta { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .task-meta { display: flex; align-items: center; gap: 6px 6px; row-gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 
   .name-tag {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
-    padding: 4px 9px;
-    border-radius: 4px;
+    padding: 5px 10px;
+    border-radius: 5px;
     letter-spacing: 1px;
     text-transform: uppercase;
     border: 1px solid transparent;
+    display: inline-block;
   }
   .tag-Hassan { background: var(--hassan); color: var(--hassan-t); }
   .tag-Naol { background: var(--naol); color: var(--naol-t); }
@@ -263,15 +264,15 @@
   }
 
   .del {
-    width: 32px; height: 32px;
+    width: 44px; height: 44px;
     display: grid; place-items: center;
-    font-size: 20px;
+    font-size: 24px;
     color: var(--muted);
     cursor: pointer;
     flex-shrink: 0;
     background: none;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
   }
   .del:active { color: var(--danger); background: rgba(255,77,77,0.1); }
 
@@ -323,12 +324,12 @@
     font-weight: 400;
   }
   .note-del {
-    position: absolute; top: 8px; right: 8px;
-    width: 28px; height: 28px;
+    position: absolute; top: 6px; right: 6px;
+    width: 40px; height: 40px;
     display: grid; place-items: center;
-    font-size: 16px;
+    font-size: 20px;
     color: var(--muted);
-    background: none; border: none; border-radius: 6px;
+    background: none; border: none; border-radius: 8px;
     cursor: pointer;
   }
   .note-del:active { color: var(--danger); background: rgba(255,77,77,0.1); }
@@ -387,30 +388,30 @@
     flex: 1;
     width: 100%;
     font-family: 'Archivo', sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     border: none;
     outline: none;
     background: transparent;
     color: var(--text);
-    padding: 10px 6px;
-    min-height: 42px;
+    padding: 12px 8px;
+    min-height: 48px;
     resize: none;
   }
-  .compose-box textarea { line-height: 1.4; min-height: 44px; max-height: 140px; }
+  .compose-box textarea { line-height: 1.4; min-height: 48px; max-height: 160px; }
   .compose-box input[type=text]::placeholder,
   .compose-box textarea::placeholder { color: var(--muted); }
 
   .send-btn {
-    width: 44px; height: 44px;
+    width: 52px; height: 52px;
     flex-shrink: 0;
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--amber);
     color: #000;
     border: none;
     cursor: pointer;
     font-family: 'Archivo Black', sans-serif;
-    font-size: 22px;
+    font-size: 26px;
     display: grid; place-items: center;
     transition: transform 0.1s, background 0.15s;
   }
@@ -418,13 +419,13 @@
   .send-btn.orange { background: var(--orange); color: #fff; }
   .send-btn.orange:active { background: var(--orange-dk); }
 
-  .expandable { padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--line); }
-  .member-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .expandable { padding-top: 12px; margin-top: 10px; border-top: 1px solid var(--line); }
+  .member-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
   .chip {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 800;
-    padding: 7px 12px;
-    border-radius: 6px;
+    padding: 12px 16px;
+    border-radius: 10px;
     border: 1px solid var(--line-2);
     background: var(--panel);
     color: var(--text-dim);
@@ -432,7 +433,37 @@
     transition: all 0.15s;
     letter-spacing: 1px;
     text-transform: uppercase;
-    min-height: 32px;
+    min-height: 44px;
+    position: relative;
+  }
+  .chip .chk {
+    display: inline-block;
+    width: 14px; height: 14px;
+    margin-right: 6px;
+    vertical-align: -2px;
+    border-radius: 3px;
+    border: 1.5px solid currentColor;
+    opacity: 0.5;
+    text-align: center;
+    line-height: 11px;
+    font-size: 11px;
+  }
+  .chip.active-Hassan .chk,
+  .chip.active-Naol .chk,
+  .chip.active-Maslah .chk,
+  .chip.active-Ollie .chk,
+  .chip.active-Yussuf .chk {
+    opacity: 1;
+    background: currentColor;
+  }
+  .chip.active-Hassan .chk::after,
+  .chip.active-Naol .chk::after,
+  .chip.active-Maslah .chk::after,
+  .chip.active-Ollie .chk::after,
+  .chip.active-Yussuf .chk::after {
+    content: '✓';
+    color: #000;
+    font-weight: 900;
   }
   .chip.active-Hassan { background: var(--hassan); color: var(--hassan-t); border-color: var(--hassan-t); }
   .chip.active-Naol { background: var(--naol); color: var(--naol-t); border-color: var(--naol-t); }
@@ -451,14 +482,14 @@
   .due-row input[type=date] {
     flex: 1;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    font-size: 14px;
     border: 1px solid var(--line-2);
-    border-radius: 8px;
-    padding: 8px 10px;
+    border-radius: 10px;
+    padding: 12px;
     background: var(--panel);
     color: var(--text);
     outline: none;
-    min-height: 38px;
+    min-height: 44px;
     color-scheme: dark;
   }
   .compose-hint {
@@ -684,7 +715,7 @@
 
 <script>
 const MEMBERS = ["Hassan","Naol","Maslah","Ollie","Yussuf"];
-let selectedMember = MEMBERS[0];
+let selectedMembers = [MEMBERS[0]];
 let noteAuthor = MEMBERS[0];
 let filterBy = "all";
 let tasks = {};
@@ -777,7 +808,8 @@ async function addTask() {
   const text = input.value.trim();
   if (!text) { input.focus(); return; }
   const id = "t" + Date.now();
-  const task = { text, assignee: selectedMember, done: false, due: due.value, ts: Date.now() };
+  const assignees = selectedMembers.length ? [...selectedMembers] : [MEMBERS[0]];
+  const task = { text, assignees, done: false, due: due.value, ts: Date.now() };
   tasks[id] = task;
   input.value = ""; due.value = "";
   input.blur();
@@ -840,9 +872,10 @@ function isOverdue(t) {
 }
 
 function renderChips() {
-  document.getElementById("member-chips").innerHTML = MEMBERS.map(m =>
-    `<button class="chip${selectedMember===m?" active-"+m:""}" onclick="selectMember('${m}')">${m}</button>`
-  ).join("");
+  document.getElementById("member-chips").innerHTML = MEMBERS.map(m => {
+    const active = selectedMembers.includes(m);
+    return `<button class="chip${active?" active-"+m:""}" onclick="selectMember('${m}')"><span class="chk"></span>${m}</button>`;
+  }).join("");
 }
 function renderNoteChips() {
   document.getElementById("note-member-chips").innerHTML = MEMBERS.map(m =>
@@ -878,7 +911,7 @@ function renderTasks() {
   arr.sort((a,b) => b.ts - a.ts);
   if (filterBy === "pending") arr = arr.filter(t=>!t.done);
   else if (filterBy === "done") arr = arr.filter(t=>t.done);
-  else if (MEMBERS.includes(filterBy)) arr = arr.filter(t=>t.assignee===filterBy);
+  else if (MEMBERS.includes(filterBy)) arr = arr.filter(t=>taskAssignees(t).includes(filterBy));
 
   const list = document.getElementById("task-list");
   if (!arr.length) {
@@ -893,7 +926,7 @@ function renderTasks() {
       <div class="task-body">
         <div class="task-text">${escapeHTML(t.text)}</div>
         <div class="task-meta">
-          <span class="name-tag tag-${t.assignee}">${t.assignee}</span>
+          ${taskAssignees(t).map(a => `<span class="name-tag tag-${a}">${a}</span>`).join("")}
           ${t.due?`<span class="due-tag">${t.due}</span>`:""}
           ${over?`<span class="overdue">Overdue</span>`:""}
         </div>
@@ -938,7 +971,17 @@ function renderNotes() {
 }
 
 function renderAll() { renderChips(); renderFilters(); renderStats(); renderTasks(); }
-function selectMember(m) { selectedMember = m; renderChips(); }
+function selectMember(m) {
+  const i = selectedMembers.indexOf(m);
+  if (i >= 0) { if (selectedMembers.length > 1) selectedMembers.splice(i, 1); }
+  else selectedMembers.push(m);
+  renderChips();
+}
+function taskAssignees(t) {
+  if (Array.isArray(t.assignees) && t.assignees.length) return t.assignees;
+  if (t.assignee) return [t.assignee];
+  return [];
+}
 function selectNoteAuthor(m) { noteAuthor = m; renderNoteChips(); }
 function setFilter(f) { filterBy = f; renderAll(); }
 
