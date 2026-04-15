@@ -848,7 +848,9 @@ async function removeNote(id) {
   renderNotes();
 }
 
+let submittingTask = false;
 async function addTask() {
+  if (submittingTask) return;
   const input = document.getElementById("task-input");
   const due = document.getElementById("due-input");
   const text = input.value.trim();
@@ -856,27 +858,42 @@ async function addTask() {
   const id = "t" + Date.now();
   const assignees = selectedMembers.length ? [...selectedMembers] : [MEMBERS[0]];
   const task = { text, assignees, done: false, due: due.value, ts: Date.now() };
+  submittingTask = true;
   tasks[id] = task;
-  input.value = ""; due.value = "";
-  input.blur();
-  collapseBox("task-compose");
   renderAll();
-  await pushTask(id, task);
+  try {
+    await pushTask(id, task);
+    input.value = "";
+    due.value = "";
+    selectedMembers = [MEMBERS[0]];
+    input.blur();
+    collapseBox("task-compose");
+    renderChips();
+  } finally {
+    submittingTask = false;
+  }
 }
 
+let submittingNote = false;
 async function addNote() {
+  if (submittingNote) return;
   const input = document.getElementById("note-input");
   const text = input.value.trim();
   if (!text) { input.focus(); return; }
   const id = "n" + Date.now();
   const note = { text, author: noteAuthor, ts: Date.now() };
+  submittingNote = true;
   notes[id] = note;
-  input.value = "";
-  input.style.height = "auto";
-  input.blur();
-  collapseBox("note-compose");
   renderNotes();
-  await pushNote(id, note);
+  try {
+    await pushNote(id, note);
+    input.value = "";
+    input.style.height = "auto";
+    input.blur();
+    collapseBox("note-compose");
+  } finally {
+    submittingNote = false;
+  }
 }
 
 async function toggleDone(id) {
