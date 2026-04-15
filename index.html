@@ -19,6 +19,10 @@
     --text-dim: #9A9A9A;
     --muted: #6B6B6B;
 
+    --nav-bg: #050505;
+    --dock-fade: rgba(10,10,10,0);
+    --scheme: dark;
+
     --amber: #FFB020;
     --amber-2: #FFC84D;
     --orange: #FF6A1A;
@@ -37,6 +41,29 @@
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-top: env(safe-area-inset-top, 0px);
     --nav-h: calc(64px + var(--safe-bottom));
+  }
+  body.light {
+    --bg: #F5F3EE;
+    --panel: #FFFFFF;
+    --panel-2: #FBFAF6;
+    --line: #E5E2DA;
+    --line-2: #CFCBC1;
+    --text: #1A1A1A;
+    --text-dim: #555;
+    --muted: #8A8680;
+
+    --nav-bg: #FFFFFF;
+    --dock-fade: rgba(245,243,238,0);
+    --scheme: light;
+
+    --danger: #D32F2F;
+    --ok: #2E7D32;
+
+    --hassan: #E8F5E9;   --hassan-t: #1B5E20;
+    --naol: #E3F2FD;     --naol-t: #0D47A1;
+    --maslah: #FFF3E0;   --maslah-t: #E65100;
+    --ollie: #FCE4EC;    --ollie-t: #880E4F;
+    --yussuf: #EDE7F6;   --yussuf-t: #4527A0;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -73,6 +100,23 @@
     z-index: 100;
   }
   .topbar-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .topbar-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+    display: grid; place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .icon-btn:active { background: var(--panel-2); border-color: var(--line-2); }
+  .icon-btn .spin-ico { display: inline-block; transition: transform 0.2s; }
+  .icon-btn.spinning .spin-ico { animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .brand-mark {
     width: 34px; height: 34px; flex-shrink: 0;
@@ -400,7 +444,7 @@
     bottom: var(--nav-h);
     z-index: 90;
     padding: 18px 10px 8px;
-    background: linear-gradient(to bottom, rgba(10,10,10,0) 0%, var(--bg) 40%);
+    background: linear-gradient(to bottom, var(--dock-fade) 0%, var(--bg) 40%);
     pointer-events: none;
   }
   .compose-box {
@@ -411,6 +455,7 @@
     padding: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   }
+  body.light .compose-box { box-shadow: 0 6px 22px rgba(0,0,0,0.12); }
   .compose-box.collapsed .expandable { display: none; }
 
   .input-row { display: flex; gap: 8px; align-items: center; }
@@ -532,7 +577,7 @@
     color: var(--text);
     outline: none;
     min-height: 44px;
-    color-scheme: dark;
+    color-scheme: var(--scheme);
   }
   .compose-hint {
     font-size: 10px;
@@ -550,7 +595,7 @@
     left: 0; right: 0; bottom: 0;
     height: var(--nav-h);
     padding-bottom: var(--safe-bottom);
-    background: #050505;
+    background: var(--nav-bg);
     border-top: 1px solid var(--line);
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -693,6 +738,14 @@
         </div>
       </div>
     </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="refresh-btn" onclick="manualRefresh()" aria-label="Refresh">
+        <span class="spin-ico">⟳</span>
+      </button>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span id="theme-ico">☾</span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -769,6 +822,35 @@ let notes = {};
 let currentTab = "tasks";
 let DB_URL = localStorage.getItem("fb_db_url") || "";
 let pollInterval = null;
+
+function applyTheme(mode) {
+  const isLight = mode === "light";
+  document.body.classList.toggle("light", isLight);
+  const ico = document.getElementById("theme-ico");
+  if (ico) ico.textContent = isLight ? "☀" : "☾";
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", isLight ? "#F5F3EE" : "#0A0A0A");
+}
+function toggleTheme() {
+  const next = document.body.classList.contains("light") ? "dark" : "light";
+  localStorage.setItem("theme", next);
+  applyTheme(next);
+}
+applyTheme(localStorage.getItem("theme") || "dark");
+
+async function manualRefresh() {
+  const btn = document.getElementById("refresh-btn");
+  if (!btn || btn.classList.contains("spinning")) return;
+  if (!DB_URL) return;
+  btn.classList.add("spinning");
+  const started = Date.now();
+  try { await Promise.all([fetchTasks(), fetchNotes()]); }
+  finally {
+    const elapsed = Date.now() - started;
+    const hold = Math.max(0, 600 - elapsed);
+    setTimeout(() => btn.classList.remove("spinning"), hold);
+  }
+}
 
 function checkSetup() {
   if (DB_URL) {
